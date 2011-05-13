@@ -11,7 +11,7 @@ var Mailgun = function(apiKey) {
   this.sendText = function(sender, recipients, subject, text, servername, options, callback) {
     //defaults
     servername = servername || '';
-    options = {}
+    options = options || {}
     
     //prep http request
     var httpOptions = {
@@ -43,7 +43,34 @@ var Mailgun = function(apiKey) {
     };
   };
   
-  
+  this.sendRaw = function(sender, recipients, raw_body, servername, callback) {
+    //defaults
+    servername = servername || '';
+    
+    //prep http request
+    var httpOptions = {
+      host: 'http://mailgun.net',
+      port: 80,
+      method: 'POST',
+      path: '/api/messages.eml?servername=' + servername,
+      headers = {
+        'Authorization': 'Basic ' + apiKey64,
+        'Content-Type': 'text/plain; charset=utf-8'
+      }
+    };
+    
+    //fire the request
+    var req = http.request(httpOptions, responseCb);
+    var message = 'From: ' + sender +
+                  '\nTo: ' + recipients.join(', ') +
+                  '\n\n' + raw_body;
+    req.write(message);
+    req.end();
+    
+    var responseCb = function(res) {
+      callback(res.statusCode == 201);
+    };
+  };
 };
 
 exports.Mailgun = Mailgun;
