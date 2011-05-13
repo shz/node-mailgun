@@ -19,7 +19,7 @@ var Mailgun = function(apiKey) {
       port: 80,
       method: 'POST',
       path: '/api/messages.txt',
-      headers = {
+      headers: {
         'Authorization': 'Basic ' + apiKey64,
         'Content-Type': 'application/x-www-urlencoded'
       }
@@ -53,7 +53,7 @@ var Mailgun = function(apiKey) {
       port: 80,
       method: 'POST',
       path: '/api/messages.eml?servername=' + servername,
-      headers = {
+      headers: {
         'Authorization': 'Basic ' + apiKey64,
         'Content-Type': 'text/plain; charset=utf-8'
       }
@@ -74,3 +74,4 @@ var Mailgun = function(apiKey) {
 };
 
 exports.Mailgun = Mailgun;
+module.exports = exports;

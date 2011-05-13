@@ -1,10 +1,11 @@
 {
-  "name": "node-mailgun",
-  "version": "0.1.0",
+  "name": "mailgun",
+  "version": "0.1.2",
   "description": "Mailgun API for Node.js",
   "author": "Patrick Stein",
   "repositories": [{
     "type": "git",
     "url": "git@github.com:shz/node-mailgun.git"
-  }]
+  }],
+  "main": "./mailgun"
 }

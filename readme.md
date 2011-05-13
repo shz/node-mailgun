@@ -8,6 +8,5 @@ Write me.
 recipients is an array of email addresses to send to
 
 TODO:
- * sendRaw
  * routes
  * mailboxes
