@@ -34,7 +34,13 @@ of them are exposed here.
                 should take a single parameter, `err`, that will be set to 
                 `true` if the email failed to send.
 
- **TODO:** Document tagging (in the meantime, see Mailgun's docs)
+### Mailgun Headers
+
+Mailgun understands a couple headers from `options`.  These are defined
+below.
+
+ * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.MAILGUN_TAG`)
+ * `X-Campaign-Id` - Used for tracking campaign data (defined in `Mailgun.CAMPAIGN_ID`)
 
 `sendRaw(sender, recipients, rawBody, servername, callback(err))`
 

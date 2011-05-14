@@ -3,7 +3,8 @@ var http = require('http'),
     querystring = require('querystring');
 
 //constants
-var MAILGUN_TAG = 'X-Mailgun-Tag';
+var MAILGUN_TAG = 'X-Mailgun-Tag',
+    CAMPAIGN_ID = 'X-Campaign-Id';
     
 var Mailgun = function(apiKey) {
   var apiKey64 = new Buffer(apiKey).toString('base64');
@@ -11,7 +12,7 @@ var Mailgun = function(apiKey) {
   this.sendText = function(sender, recipients, subject, text, servername, options, callback) {
     //defaults
     servername = servername || '';
-    options = options || {}
+    options = options || {};
     
     //prep http request
     var httpOptions = {
@@ -61,8 +62,8 @@ var Mailgun = function(apiKey) {
     
     //fire the request
     var req = http.request(httpOptions, responseCb);
-    var message = 'From: ' + sender +
-                  '\nTo: ' + recipients.join(', ') +
+    var message = sender +
+                  '\n' + recipients.join(', ') +
                   '\n\n' + rawBody;
     req.write(message);
     req.end();
@@ -74,5 +75,8 @@ var Mailgun = function(apiKey) {
 };
 
 exports.Mailgun = Mailgun;
+exports.MAILGUN_TAG = MAILGUN_TAG;
+exports.CAMPAIGN_ID = CAMPAIGN_ID;
+
 module.exports = exports;
 
