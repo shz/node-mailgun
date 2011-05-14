@@ -39,11 +39,11 @@ var Mailgun = function(apiKey) {
     
     //handles the response from the server
     var responseCb = function(res) {
-      callback(res.statusCode == 201);
+      if (callback) callback(res.statusCode == 201);
     };
   };
   
-  this.sendRaw = function(sender, recipients, raw_body, servername, callback) {
+  this.sendRaw = function(sender, recipients, rawBody, servername, callback) {
     //defaults
     servername = servername || '';
     
@@ -63,15 +63,16 @@ var Mailgun = function(apiKey) {
     var req = http.request(httpOptions, responseCb);
     var message = 'From: ' + sender +
                   '\nTo: ' + recipients.join(', ') +
-                  '\n\n' + raw_body;
+                  '\n\n' + rawBody;
     req.write(message);
     req.end();
     
     var responseCb = function(res) {
-      callback(res.statusCode == 201);
+      if (callback) callback(res.statusCode == 201);
     };
   };
 };
 
 exports.Mailgun = Mailgun;
 module.exports = exports;
+
