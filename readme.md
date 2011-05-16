@@ -17,7 +17,8 @@ of them are exposed here.
 
 `sendText(sender, recipients, subject, text, servername='', options={}, callback(err))`
 
- * `sender` - Sender of the message
+ * `sender` - Sender of the message; this should be a full email address
+              (e.g. `example@example.com).
  * `recipients` - An array of recipients; these can be email addresses
                   *or* HTTP URLs.
  * `subject` - Message subject
@@ -44,7 +45,8 @@ below.
 
 `sendRaw(sender, recipients, rawBody, servername, callback(err))`
 
- * `sender` - Sender of the message
+ * `sender` - Sender of the message; this should be a full email address
+              (e.g. `example@example.com`)
  * `recipients` - An array of recipients; these can be email addresses
                   *or* HTTP URLs.
  * `rawBody` - MIME message to send
@@ -72,7 +74,7 @@ Here's a complete sending example.
         else     console.log('Success');
     });
 
-TODO:
+## TODO:
 
  * routes
  * mailboxes
