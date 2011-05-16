@@ -19,8 +19,8 @@ of them are exposed here.
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com).
- * `recipients` - An array of recipients; these can be email addresses
-                  *or* HTTP URLs.
+ * `recipients` - An array (`['a@example.com', 'b@example.com']`) or string (`example@example.com`)
+                  of recipients; these can be email addresses *or* HTTP URLs.
  * `subject` - Message subject
  * `text` - Message body text
  * `servername` - The name of the Mailgun server.  If you only have
@@ -47,8 +47,8 @@ below.
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com`)
- * `recipients` - An array of recipients; these can be email addresses
-                  *or* HTTP URLs.
+ * `recipients` - An array (`['a@example.com', 'b@example.com']`) or string (`example@example.com`)
+                  of recipients; these can be email addresses *or* HTTP URLs.
  * `rawBody` - MIME message to send
  * `servername` - The name of the Mailgun server.  If you only have
                   one server on your Mailgun account, this can be empty.

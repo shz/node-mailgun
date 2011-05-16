@@ -13,6 +13,9 @@ var Mailgun = function(apiKey) {
     //defaults
     servername = servername || '';
     options = options || {};
+    //be flexible with recipients
+    if (typeof(recipients) == 'string')
+      recipients = [recipients];
    
     //generate the body text
     var body = querystring.stringify({
@@ -45,6 +48,10 @@ var Mailgun = function(apiKey) {
   this.sendRaw = function(sender, recipients, rawBody, servername, callback) {
     //defaults
     servername = servername || '';
+    //be flexible with recipients
+    if (typeof(recipients) == 'string')
+      recipients = [recipients];
+    
    
     //create the message
     var message = sender +
