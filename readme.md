@@ -10,6 +10,12 @@ It's MIT licensed, and being used in production over at [Hipsell](http://hipsell
 Or you can just throw `mailgun.js` into your application.  There are
 no dependendies outside of node's standard library.
 
+**Note:** `master` on Github is going to be untested/unstable at times,
+          as this is a small enough library that I don't want to bother
+          with a more complicated repo structure.  As such, you should
+          really only rely on the version of `node-mailgun` in `npm`, as
+          I'll only ever push stable and tested code there.
+
 ## Usage
 
 At the time of writing, Mailgun's documentation is actually incorrect, which
@@ -36,7 +42,7 @@ Sends a simple plain-text email.  This also allows for slightly easier
 sending of Mailgun options, since with `sendRaw` you have to set them
 in the MIME body yourself.
 
-`sendText(sender, recipients, subject, text, [servername=''], [options={}], callback(err))`
+`sendText(sender, recipients, subject, text, [servername=''], [options={}], [callback(err)])`
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com).
@@ -72,7 +78,7 @@ you should either build a MIME message manually or by using some MIME
 library (I've not been able to find one for node.js -- if you're aware
 of one let me know and I'll link it here).
 
-`sendRaw(sender, recipients, rawBody, servername, callback(err))`
+`sendRaw(sender, recipients, rawBody, [servername], [callback(err)])`
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com`)

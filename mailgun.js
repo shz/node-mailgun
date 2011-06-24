@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2011 by Patrick Stein
+// Copyright (C) 2011 Patrick Stein
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,105 +20,164 @@
 // THE SOFTWARE.
 //
 
+// Dirt simple includes.  Nice that we can keep things simple :)
 var http = require('http'),
     querystring = require('querystring');
 
-//constants
+// Mailgun options constants.  See Mailgun's API docs for details.
 var MAILGUN_TAG = 'X-Mailgun-Tag',
     CAMPAIGN_ID = 'X-Campaign-Id';
 
+// This class is used to tie functionality to an API key, rather than
+// using a global initialization function that forces people to use
+// only one API key per application.
 var Mailgun = function(apiKey) {
-  //the docs use a base64 header for auth, but that doesn't seem to work...
-  //var apiKey64 = new Buffer(apiKey).toString('base64');
 
-  this.sendText = function(sender, recipients, subject, text, servername, options, callback) {
-    //magic arguments
-    if (arguments.length < 5) {
-      throw new Error('Missing required argument');
-    } else if (arguments.length == 5) {
-      callback = servername;
-      servername = '';
-      options = {};
-   } else if (arguments.length == 6) {
-      callback = options;
-      servername = servername;
-      options = {};
-    }
+  // The docs use a base64 header for auth, but that doesnt' seem to
+  // actually work.  Mailgun's canonical libraries instead use the
+  // raw api key in a query parameter, which we do as well.  As such,
+  // this isn't actually needed.  I include it still for posterity.
+  this._apiKey64 = new Buffer(apiKey).toString('base64');
 
-    //defaults
-    servername = servername || '';
-    options = options || {};
-    //be flexible with recipients
-    if (typeof(recipients) == 'string')
+  this._apiKey = apiKey;
+};
+Mailgun.prototype = {};
+
+Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
+
+  // These are flexible arguments, so we define them here to make
+  // sure they're in scope.
+  var servername = '';
+  var options = {};
+  var callback = null;
+
+  // Less than 4 arguments means we're missing something that prevents
+  // us from even sending an email, so we fail.
+  if (arguments.length < 4)
+    throw new Error('Missing required argument');
+
+  // Flexible argument magic!
+  var args = Array.prototype.slice.call(arguments, 4);
+  // Pluck servername.
+  if (args[0] && typeof args[0] == 'string')
+    servername = args.shift() || servername;
+  // Pluck options.
+  if (args[0] && typeof args[0] == 'object')
+    options = args.shift() || options;
+  // Pluck callback.
+  if (args[0] && typeof args[0] == 'function')
+    callback = args.shift() || callback;
+  // Don't be messy.
+  delete args;
+
+  // We allow recipients to be passed as either a string or an array,
+  // but normalize to to an array for consistency later in the
+  // function.
+  if (typeof(recipients) == 'string')
       recipients = [recipients];
 
-    //generate the body text
-    var body = querystring.stringify({
-      sender: sender,
-      recipients: recipients.join(', '),
-      subject: subject,
-      body: text,
-      options: JSON.stringify(options)
-    });
+  // Build the HTTP POST body text.
+  var body = querystring.stringify({
+    sender: sender,
+    recipients: recipients.join(', '),
+    subject: subject,
+    body: text,
+    options: JSON.stringify(options)
+  });
 
-    //prep http request
-    var httpOptions = {
-      host: 'mailgun.net',
-      port: 80,
-      method: 'POST',
-      path: '/api/messages.txt?api_key=' + apiKey + '&servername=' + servername,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(body)
-      }
-    };
+  // Prepare our options for the HTTP request we'll make to the
+  // Mailgun API.
+  var httpOptions = {
+    host: 'mailgun.net',
+    port: 80,
+    method: 'POST',
+    path: '/api/messages.txt?api_key=' + apiKey +
+          (servername ? '&servername=' + servername : ''),
 
-    //fire the request
-    var req = http.request(httpOptions, function(res) {
-      if (callback) callback(res.statusCode != 201 ? res.statusCode : undefined);
-    });
-    req.end(body);
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(body)
+    }
   };
 
-  this.sendRaw = function(sender, recipients, rawBody, servername, callback) {
-    //magic arguments
-    if (arguments.length < 4) {
-      throw new Error('Missing required argument');
-    } else if (arguments.length == 4) {
-      callback = servername;
-      servername = '';
-    }
+  // Fire the request to Mailgun's API.
+  var req = http.request(httpOptions, function(res) {
 
-    //defaults
-    servername = servername || '';
-    //be flexible with recipients
-    if (typeof(recipients) == 'string')
+    // If the user supplied a callback, fire it and set `err` to the
+    // status code of the request if it wasn't successful.
+    if (callback) callback(res.statusCode != 201 ? res.statusCode : undefined);
+  });
+
+  // Wrap up the request by sending the body, which contains the
+  // actual email data we want to send.
+  req.end(body);
+};
+
+Mailgun.prototype.sendRaw = function(sender, recipients, rawBody) {
+
+  // These are flexible arguments, so we define them here to make
+  // sure they're in scope.
+  var servername = '';
+  var callback = null;
+
+  // Less than 3 arguments means we're missing something that prevents
+  // us from even sending an email, so we fail.
+  if (arguments.length < 3)
+    throw new Error('Missing required argument');
+
+  // Flexible argument magic!
+  var args = Array.prototype.slice.call(arguments, 3);
+  // Pluck servername.
+  if (args[0] && typeof args[0] == 'string')
+    servername = args.shift() || servername;
+  // Pluck callback.
+  if (args[0] && typeof args[0] == 'function')
+    callback = args.shift() || callback;
+  // Don't be messy.
+  delete args;
+
+  // We allow recipients to be passed as either a string or an array,
+  // but normalize to to an array for consistency later in the
+  // function.
+  if (typeof(recipients) == 'string')
       recipients = [recipients];
 
+  // Mailgun wants its messages formatted in a special way.  Why?
+  // Who knows.
+  var message = sender +
+                '\n' + recipients.join(', ') +
+                '\n\n' + rawBody;
 
-    //create the message
-    var message = sender +
-                  '\n' + recipients.join(', ') +
-                  '\n\n' + rawBody;
+  // Prepare our options for the HTTP request we'll make to the
+  // Mailgun API.
+  var httpOptions = {
+    host: 'mailgun.net',
+    port: 80,
+    method: 'POST',
+    path: '/api/messages.eml?api_key=' + apiKey +
+          (servername ? '&servername=' + servername : ''),
 
-    //prep http request
-    var httpOptions = {
-      host: 'mailgun.net',
-      port: 80,
-      method: 'POST',
-      path: '/api/messages.eml?api_key=' + apiKey + '&servername=' + servername,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Length': Buffer.byteLength(message)
-      }
-    };
-
-    //fire the request
-    var req = http.request(httpOptions, function(res) {
-      if (callback) callback(res.statusCode != 201);
-    });
-    req.end(message);
+    // Yep, that's a plaintext body.  Again, Mailgun wants the MIME
+    // data sent with some extra formatting, so I guess plaintext
+    // makes sense.
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Length': Buffer.byteLength(message)
+    }
   };
+
+  // Fire the request to Mailgun's API.
+  var req = http.request(httpOptions, function(res) {
+
+    // If the user supplied a callback, fire it and set `err` to the
+    // status code of the request if it wasn't successful.
+    if (callback) callback(res.statusCode != 201 ? res.statusCode : undefined);
+  });
+
+  // Wrap up the request by sending the message, which contains the
+  // actual email data we want to send.
+  req.end(message);
+
 };
 
 exports.Mailgun = Mailgun;
