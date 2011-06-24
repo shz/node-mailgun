@@ -1,30 +1,51 @@
 # node-mailgun
 
-A mailgun API for node.js.  At the moment, this really only includes
-sending functionality.
+This library provides simple access to Mailgun's API for node.js applications.
+It's MIT licensed, and being used in production over at [Hipsell](http://hipsell.com).
 
-## Initialization
+## Installation
 
-Access to the API is done through the Mailgun object.  It's instantiated
+    npm install mailgun
+
+Or you can just throw `mailgun.js` into your application.  There are
+no dependendies outside of node's standard library.
+
+## Usage
+
+At the time of writing, Mailgun's documentation is actually incorrect, which
+is unfortunate.  As such, I'm going to re-document everything in this README
+according to the actual way it's implemented in `node-mailgun`, which itself
+is based off the implementation from Mailgun's github account, and not the API
+docs on the site.
+
+### Initialization
+
+Access to the API is done through a Mailgun object.  It's instantiated
 like so:
 
     var mg = new Mailgun('api-key');
 
-## Sending Email
+### Sending Email
 
 Mailgun's API provides two methods for sending email: raw, and text.  Both
 of them are exposed here.
 
-`sendText(sender, recipients, subject, text, servername='', options={}, callback(err))`
+#### sendText
+
+Sends a simple plain-text email.  This also allows for slightly easier
+sending of Mailgun options, since with `sendRaw` you have to set them
+in the MIME body yourself.
+
+`sendText(sender, recipients, subject, text, [servername=''], [options={}], callback(err))`
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com).
- * `recipients` - An array (`['a@example.com', 'b@example.com']`) or string (`example@example.com`)
+ * `recipients` - A string (`example@example.com`) or array of strings (`['a@example.com', 'b@example.com']`)
                   of recipients; these can be email addresses *or* HTTP URLs.
  * `subject` - Message subject
  * `text` - Message body text
  * `servername` - The name of the Mailgun server.  If you only have
-                  one server on your Mailgun account, this can be empty.
+                  one server on your Mailgun account, this can be omitted.
                   Otherwise, it should be set to the server you want to
                   send from.
  * `options` - Optional parameters.  See Mailgun's API docs for details on
@@ -32,45 +53,74 @@ of them are exposed here.
                `headers`, which should be a hash of additional MIME headers
                you want to send.
  * `callback` - Callback to be fired when the email is done being sent.  This
-                should take a single parameter, `err`, that will be set to 
-                `true` if the email failed to send.
+                should take a single parameter, `err`, that will be set to
+                the status code of the API HTTP response code  if the email
+                failed to send; on success, `err` will be `undefined`.
 
-### Mailgun Headers
+##### Example
 
-Mailgun understands a couple headers from `options`.  These are defined
-below.
+    sendText('sender@example.com',
+             ['recipient1@example.com', 'http://example.com/recipient2'],
+             'Behold the wonderous power of email!',
+             {'X-Campaign-Id': 'something'},
+             function(err) { err && console.log(err) });
 
- * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.MAILGUN_TAG`)
- * `X-Campaign-Id` - Used for tracking campaign data (defined in `Mailgun.CAMPAIGN_ID`)
+#### sendRaw
+
+Sends a raw MIME message.  *Don't* just use this with text; instead,
+you should either build a MIME message manually or by using some MIME
+library (I've not been able to find one for node.js -- if you're aware
+of one let me know and I'll link it here).
 
 `sendRaw(sender, recipients, rawBody, servername, callback(err))`
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com`)
- * `recipients` - An array (`['a@example.com', 'b@example.com']`) or string (`example@example.com`)
+ * `recipients` - A string (`example@example.com`) or array of strings (`['a@example.com', 'b@example.com']`)
                   of recipients; these can be email addresses *or* HTTP URLs.
  * `rawBody` - MIME message to send
  * `servername` - The name of the Mailgun server.  If you only have
-                  one server on your Mailgun account, this can be empty.
+                  one server on your Mailgun account, this can be omitted.
                   Otherwise, it should be set to the server you want to
                   send from.
- * `callback` - Callback to be fired when the email has finished sending.
-                This function should take a single parameter, `err`, that 
-                will be set to `true` if the email failed to send.
+ * `callback` - Callback to be fired when the email is done being sent.  This
+                should take a single parameter, `err`, that will be set to
+                the status code of the API HTTP response code  if the email
+                failed to send; on success, `err` will be `undefined`.
 
-## Example
+##### Example
+
+  sendRaw('sender@example.com',
+          ['recipient1@example.com', 'http://example.com/recipient2'],
+          'From: sender@example.com' +
+            '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
+            '\nContent-Type: text/html; charset=utf-8' +
+            '\nSubject: I Love Email' +
+            '\n\nBecause it's just so awesome',
+          function(err) { err && console.log(err) });
+
+#### Mailgun Headers
+
+Mailgun understands a couple special headers, specified via `options` when using
+`sendText`, or in the MIME headers when using `sendRaw`.  These are defined
+below.
+
+ * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.MAILGUN_TAG`)
+ * `X-Campaign-Id` - Used for tracking campaign data (defined in `Mailgun.CAMPAIGN_ID`)
+
+#### Example
 
 Here's a complete sending example.
 
     var mailgun = require('mailgun');
 
-    var mg = new Mailgun('api-key');
+    var mg = new Mailgun('some-api-key');
     mg.sendText('example@example.com', ['rec1@example.com', 'rec2@example.com'],
       'This is the subject',
       'This is the text',
       'noreply@example.com', {},
       function(err) {
-        if (err) console.log('Oh noes');
+        if (err) console.log('Oh noes: ' + err);
         else     console.log('Success');
     });
 
