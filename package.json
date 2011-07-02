@@ -1,6 +1,6 @@
 {
   "name": "mailgun",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "Node.js interface to the Mailgun API",
   "author": "shz",
   "repositories": [{

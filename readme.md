@@ -94,6 +94,10 @@ of one let me know and I'll link it here).
                 the status code of the API HTTP response code  if the email
                 failed to send; on success, `err` will be `undefined`.
 
+**Note:** Sending a message via raw MIME lets you use Mailgun's built-in
+          templating shinies.  Check out the [Mailgun Docs](http://documentation.mailgun.net/Documentation/DetailedDocsAndAPIReference#Message_Templates)
+          for details.
+
 ##### Example
 
   sendRaw('sender@example.com',
@@ -104,6 +108,17 @@ of one let me know and I'll link it here).
             '\nSubject: I Love Email' +
             '\n\nBecause it's just so awesome',
           function(err) { err && console.log(err) });
+
+#### Email Addresses
+
+Mailgun allows sender and recipient email addresses to be formatted in
+several different ways:
+
+ * `'John Doe' <john@example.com>`
+ * `"John Doe" <john@example.com>`
+ * `John Doe <john@example.com>`
+ * `<john@example.com>`
+ * `john@example.com`
 
 #### Mailgun Headers
 
@@ -121,7 +136,7 @@ Here's a complete sending example.
     var mailgun = require('mailgun');
 
     var mg = new Mailgun('some-api-key');
-    mg.sendText('example@example.com', ['rec1@example.com', 'rec2@example.com'],
+    mg.sendText('example@example.com', ['Recipient 1 <rec1@example.com>', 'rec2@example.com'],
       'This is the subject',
       'This is the text',
       'noreply@example.com', {},
@@ -130,8 +145,45 @@ Here's a complete sending example.
         else     console.log('Success');
     });
 
+### Routing
+
+Mailgun lets you route incoming email to different destinations.  TODO - more docs
+
+#### createRoute
+TODO
+
+#### deleteRoute
+
+Deletes a route if it exists, otherwise fails silently.
+
+#### getRoutes
+
+Gets a list of all routes on the specified server.
+
+`getRoutes(callback(err, routes))`
+
+ * `callback` - Callback to be fired when the request has finished.  This
+                should take two parameters: `err`, which will hold either an
+                HTTP error code, or an error string on failure; and `routes`,
+                which will be a list of routes on success.  Routes returned
+                through this callback will be objects with three fields: `pattern`,
+                `destination`, and `id`.
+
+##### Example
+
+    getRoutes(function(err, routes) {
+
+      if (err) console.log('Error:', err);
+
+      for (var i=0; i<routes.length; i++) {
+        console.log('Route');
+        console.log('  Pattern:', routes[i].pattern);
+        console.log('  Destination:', routes[i].destination);
+        console.log('  Id:', routes[i].id);
+      }
+    });
+
 ## TODO:
 
- * routes
- * mailboxes
+ * Mailboxes
 
