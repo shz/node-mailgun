@@ -1,11 +1,13 @@
 {
   "name": "mailgun",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Node.js interface to the Mailgun API",
   "author": "shz",
   "repositories": [{
     "type": "git",
     "url": "git@github.com:shz/node-mailgun.git"
   }],
-  "main": "./mailgun"
+  "main": "./mailgun",
+  "homepage": "http://github.com/shz/mailgun",
+  "engine": "node"
 }

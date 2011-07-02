@@ -158,7 +158,7 @@ Deletes a route if it exists, otherwise fails silently.
 
 ### getRoutes
 
-Gets a list of all routes on the specified server.
+Gets a list of all routes.
 
 `getRoutes(callback(err, routes))`
 
