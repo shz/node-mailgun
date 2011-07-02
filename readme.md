@@ -13,30 +13,30 @@ no dependendies outside of node's standard library.
 **Note:** `master` on Github is going to be untested/unstable at times,
           as this is a small enough library that I don't want to bother
           with a more complicated repo structure.  As such, you should
-          really only rely on the version of `node-mailgun` in `npm`, as
+          really only rely on the version of `mailgun` in `npm`, as
           I'll only ever push stable and tested code there.
 
 ## Usage
 
-At the time of writing, Mailgun's documentation is actually incorrect, which
-is unfortunate.  As such, I'm going to re-document everything in this README
+At the time of writing, Mailgun's documentation is actually incorrect in places,
+which is unfortunate.  As such, I'm going to re-document everything in this README
 according to the actual way it's implemented in `node-mailgun`, which itself
 is based off the implementation from Mailgun's github account, and not the API
 docs on the site.
 
-### Initialization
+## Initialization
 
 Access to the API is done through a Mailgun object.  It's instantiated
 like so:
 
     var mg = new Mailgun('api-key');
 
-### Sending Email
+## Sending Email
 
 Mailgun's API provides two methods for sending email: raw, and text.  Both
 of them are exposed here.
 
-#### sendText
+### sendText
 
 Sends a simple plain-text email.  This also allows for slightly easier
 sending of Mailgun options, since with `sendRaw` you have to set them
@@ -45,7 +45,7 @@ in the MIME body yourself.
 `sendText(sender, recipients, subject, text, [servername=''], [options={}], [callback(err)])`
 
  * `sender` - Sender of the message; this should be a full email address
-              (e.g. `example@example.com).
+              (e.g. `example@example.com`).
  * `recipients` - A string (`example@example.com`) or array of strings (`['a@example.com', 'b@example.com']`)
                   of recipients; these can be email addresses *or* HTTP URLs.
  * `subject` - Message subject
@@ -63,7 +63,7 @@ in the MIME body yourself.
                 the status code of the API HTTP response code  if the email
                 failed to send; on success, `err` will be `undefined`.
 
-##### Example
+#### Example
 
     sendText('sender@example.com',
              ['recipient1@example.com', 'http://example.com/recipient2'],
@@ -71,7 +71,7 @@ in the MIME body yourself.
              {'X-Campaign-Id': 'something'},
              function(err) { err && console.log(err) });
 
-#### sendRaw
+### sendRaw
 
 Sends a raw MIME message.  *Don't* just use this with text; instead,
 you should either build a MIME message manually or by using some MIME
@@ -98,18 +98,18 @@ of one let me know and I'll link it here).
           templating shinies.  Check out the [Mailgun Docs](http://documentation.mailgun.net/Documentation/DetailedDocsAndAPIReference#Message_Templates)
           for details.
 
-##### Example
+#### Example
 
-  sendRaw('sender@example.com',
-          ['recipient1@example.com', 'http://example.com/recipient2'],
-          'From: sender@example.com' +
-            '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
-            '\nContent-Type: text/html; charset=utf-8' +
-            '\nSubject: I Love Email' +
-            '\n\nBecause it's just so awesome',
-          function(err) { err && console.log(err) });
+    sendRaw('sender@example.com',
+            ['recipient1@example.com', 'http://example.com/recipient2'],
+            'From: sender@example.com' +
+              '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
+              '\nContent-Type: text/html; charset=utf-8' +
+              '\nSubject: I Love Email' +
+              '\n\nBecause it's just so awesome',
+            function(err) { err && console.log(err) });
 
-#### Email Addresses
+### Email Addresses
 
 Mailgun allows sender and recipient email addresses to be formatted in
 several different ways:
@@ -120,7 +120,7 @@ several different ways:
  * `<john@example.com>`
  * `john@example.com`
 
-#### Mailgun Headers
+### Mailgun Headers
 
 Mailgun understands a couple special headers, specified via `options` when using
 `sendText`, or in the MIME headers when using `sendRaw`.  These are defined
@@ -129,7 +129,7 @@ below.
  * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.MAILGUN_TAG`)
  * `X-Campaign-Id` - Used for tracking campaign data (defined in `Mailgun.CAMPAIGN_ID`)
 
-#### Example
+### Example
 
 Here's a complete sending example.
 
@@ -145,18 +145,18 @@ Here's a complete sending example.
         else     console.log('Success');
     });
 
-### Routing
+## Routing
 
 Mailgun lets you route incoming email to different destinations.  TODO - more docs
 
-#### createRoute
+### createRoute
 TODO
 
-#### deleteRoute
+### deleteRoute
 
 Deletes a route if it exists, otherwise fails silently.
 
-#### getRoutes
+### getRoutes
 
 Gets a list of all routes on the specified server.
 
@@ -169,7 +169,7 @@ Gets a list of all routes on the specified server.
                 through this callback will be objects with three fields: `pattern`,
                 `destination`, and `id`.
 
-##### Example
+#### Example
 
     getRoutes(function(err, routes) {
 
@@ -183,7 +183,7 @@ Gets a list of all routes on the specified server.
       }
     });
 
-## TODO:
+## Eventual Work:
 
  * Mailboxes
 
