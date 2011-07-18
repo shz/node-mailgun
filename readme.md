@@ -153,7 +153,7 @@ Mailgun lets you route incoming email to different destinations.  TODO - more do
 
 Creates a new route.  TODO - more docs
 
-`createRoute(pattern, destination, callback(err, id))`
+`createRoute(pattern, destination, [callback(err, id)])`
 
 TODO - document arguments
 
@@ -161,7 +161,7 @@ TODO - document arguments
 
 Deletes the route with the specified ID if it exists, otherwise fails silently.
 
-`deleteRoute(id, callback(err))`
+`deleteRoute(id, [callback(err)])`
 
  * id - Route ID, as returned by `getRoutes()` or `createRoute`.
  * Callback to be fired when the deletion is completed.  This callback

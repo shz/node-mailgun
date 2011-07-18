@@ -227,10 +227,10 @@ Mailgun.prototype.createRoute = function(pattern, destination, callback) {
       if (res.statusCode == 201) {
         var id = xre('id').exec(data)[1];
 
-        callback(undefined, id);
+        callback && callback(undefined, id);
       } else {
         var message = xre('message').exec(data);
-        callback(new Error(message ? message[1] : data));
+        callback && callback(new Error(message ? message[1] : data));
       }
     };
   }).end(data);
@@ -247,20 +247,24 @@ Mailgun.prototype.deleteRoute = function(id, callback) {
   http.request(httpOptions, function(res) {
 
     if (res.statusCode == 200) {
-      callback(undefined);
+      callback && callback(undefined);
     } else {
       var data = '';
       res.on('data', function(c) { data += c });
       res.on('close', function(err) { callback(err) });
       res.on('end', function() {
         var message = xre('message').exec(data);
-        callback(new Error(message ? message[1] : data))
+        callback && callback(new Error(message ? message[1] : data))
       });
     }
   }).end();
 };
 
 Mailgun.prototype.getRoutes = function(callback) {
+
+  // Some sanity checking.  It makes no sense to call this without a
+  // callback.
+  if (typeof callback != 'function') throw new Error('Callback must be a function');
 
   // Prep the request.
   var httpOptions = this._createHttpOptions('routes.xml', 'GET');
