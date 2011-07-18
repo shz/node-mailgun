@@ -1,7 +1,7 @@
 {
   "name": "mailgun",
   "version": "0.4.1",
-  "description": "Node.js interface to the Mailgun API",
+  "description": "Mailgun for Node.js",
   "author": "shz",
   "repository": {
     "type": "git",
