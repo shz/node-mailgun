@@ -150,11 +150,24 @@ Here's a complete sending example.
 Mailgun lets you route incoming email to different destinations.  TODO - more docs
 
 ### createRoute
-TODO
+
+Creates a new route.  TODO - more docs
+
+`createRoute(pattern, destination, callback(err, id))`
+
+TODO - document arguments
 
 ### deleteRoute
 
-Deletes a route if it exists, otherwise fails silently.
+Deletes the route with the specified ID if it exists, otherwise fails silently.
+
+`deleteRoute(id, callback(err))`
+
+ * id - Route ID, as returned by `getRoutes()` or `createRoute`.
+ * Callback to be fired when the deletion is completed.  This callback
+   takes a single argument, `err`, that will be set to an Error object
+   if something went wrong with the deletion.  If the deletion succeeded, or
+   no route existed with the specified ID, `err` will be `undefined`.
 
 ### getRoutes
 
