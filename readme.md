@@ -161,7 +161,8 @@ Creates a new route.  (TODO - what happens if it already exists?)
 
 ### deleteRoute
 
-Deletes the route with the specified ID if it exists, otherwise fails silently.
+Deletes the route with the specified ID if it exists.  If the route
+doesn't exist, nothing happens and the callback is fired without error.
 
 `deleteRoute(id, [callback(err)])`
 
