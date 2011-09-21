@@ -274,7 +274,7 @@ Mailgun.prototype.getRoutes = function(callback) {
 
     // Check for failure
     if (res.statusCode != 200)
-      return callback(res.statusCode);
+      return callback(new Error(res.statusCode);
 
     // We're going to be a little lazy and just eat up all the data
     // before parsing it.
@@ -287,7 +287,7 @@ Mailgun.prototype.getRoutes = function(callback) {
     res.on('close', function(err) {
       // FIXME - In some cases this could cause the callback to be called
       //         with an error, even after we called it successfully.
-      callback(err.code);
+      callback(new Error(err.code));
     });
 
     // Once the request is done, we have all the data and can parse it.

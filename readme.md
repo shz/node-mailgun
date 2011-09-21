@@ -10,15 +10,9 @@ It's MIT licensed, and being used in production over at [Hipsell](http://hipsell
 Or you can just throw `mailgun.js` into your application.  There are
 no dependendies outside of node's standard library.
 
-**Note:** `master` on Github is going to be untested/unstable at times,
-          as this is a small enough library that I don't want to bother
-          with a more complicated repo structure.  As such, you should
-          really only rely on the version of `mailgun` in `npm`, as
-          I'll only ever push stable and tested code there.
-
 ## Usage
 
-At the time of writing, Mailgun's documentation is actually incorrect in places,
+At the time of writing, Mailgun's documentation is actually incorrect in a few places,
 which is unfortunate.  As such, I'm going to re-document everything in this README
 according to the actual way it's implemented in `node-mailgun`, which itself
 is based off the implementation from Mailgun's github account, and not the API
@@ -151,11 +145,19 @@ Mailgun lets you route incoming email to different destinations.  TODO - more do
 
 ### createRoute
 
-Creates a new route.  TODO - more docs
+Creates a new route.  (TODO - what happens if it already exists?)
 
 `createRoute(pattern, destination, [callback(err, id)])`
 
-TODO - document arguments
+ * `pattern`  - Pattern to match against.  This can be a string or a regex,
+                and Mailgun with match accordingly.
+ * `destination` - A destination string.  This can be a URL, email address,
+                   or a comma-separated list of email addresses.
+ * `callback` - Callback to be fired when the creation has finished.  This
+                should take two parameters: `err`, which will hold an Error
+                object on failure, or undefined on success; and `id`, which
+                will be a string containing the ID of the newly-created
+                route on success.
 
 ### deleteRoute
 
@@ -163,8 +165,8 @@ Deletes the route with the specified ID if it exists, otherwise fails silently.
 
 `deleteRoute(id, [callback(err)])`
 
- * id - Route ID, as returned by `getRoutes()` or `createRoute`.
- * Callback to be fired when the deletion is completed.  This callback
+ * `id` - Route ID, as returned by `getRoutes()` or `createRoute`.
+ * `callback` - Callback to be fired when the deletion is completed.  This callback
    takes a single argument, `err`, that will be set to an Error object
    if something went wrong with the deletion.  If the deletion succeeded, or
    no route existed with the specified ID, `err` will be `undefined`.
@@ -176,17 +178,30 @@ Gets a list of all routes.
 `getRoutes(callback(err, routes))`
 
  * `callback` - Callback to be fired when the request has finished.  This
-                should take two parameters: `err`, which will hold either an
-                HTTP error code, or an error string on failure; and `routes`,
-                which will be a list of routes on success.  Routes returned
-                through this callback will be objects with three fields: `pattern`,
+                should take two parameters: `err`, which will be set to an
+                Error object if something went wrong while fetching the
+                routes; and `routes`, which will be a list of routes on
+                success.  Routes returned through this callback will be
+                plain old objects with three fields: `pattern`,
                 `destination`, and `id`.
 
-#### Example
+### Example
 
+Here's an example demonstrating all of the routing functionality.
+
+    // Create the route
+    var newRoute;
+    createRoute('foo@bar.com', 'http://example.com/example', function(err, id) {
+      if (err) return console.log('Error creating route:', err.message);
+
+      console.log('Route created:', id);
+      newRoute = id;
+    });
+
+    // Examine all routes
     getRoutes(function(err, routes) {
 
-      if (err) console.log('Error:', err);
+      if (err) return console.log('Error getting routes:', err.message);
 
       for (var i=0; i<routes.length; i++) {
         console.log('Route');
@@ -194,6 +209,11 @@ Gets a list of all routes.
         console.log('  Destination:', routes[i].destination);
         console.log('  Id:', routes[i].id);
       }
+    });
+
+    // Delete the route we just created
+    deleteRoute(newRoute, function(err) {
+      if (err) return console.log('Error deleting route:', err.message);
     });
 
 ## Eventual Work:
