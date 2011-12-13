@@ -27,7 +27,9 @@ var http = require('http'),
     querystring = require('querystring');
 
 // Mailgun options constants.  See Mailgun's API docs for details.
-var MAILGUN_TAG = 'X-Mailgun-Tag',
+var TAG = 'X-Mailgun-Tag',
+    TRACK = 'X-Mailgun-Track',
+    VARIABLES = 'X-Mailgun-Variables',
     CAMPAIGN_ID = 'X-Campaign-Id';
 
 // Utility dumb XML parsing helper.  Builds a regex of the form

@@ -120,8 +120,14 @@ Mailgun understands a couple special headers, specified via `options` when using
 `sendText`, or in the MIME headers when using `sendRaw`.  These are defined
 below.
 
- * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.MAILGUN_TAG`)
+(TODO - document usage better)
+
+ * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.TAG`)
  * `X-Campaign-Id` - Used for tracking campaign data (defined in `Mailgun.CAMPAIGN_ID`)
+ * `X-Mailgun-Track` - Used to toggle per-email tracking (defined in `Mailgun.TRACK`).
+                       Set to `yes` to enable or `no` to disable.
+ * `X-Mailgun-Variables` - Used to send custom variables to your tracking
+                           callbacks (defined in `Mailgun.VARIABLES`)
 
 ### Example
 
