@@ -117,9 +117,10 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
     sender: sender,
     recipients: recipients.join(', '),
     subject: subject,
-    body: text,
-    options: JSON.stringify(options)
+    body: text
   });
+  if(options && options !== {})
+    body.options = JSON.stringify(options);
 
   // Prepare our API request.
   var httpOptions = this._createHttpOptions('messages.txt', 'POST', servername);
