@@ -1,13 +1,16 @@
 {
   "name": "mailgun",
-  "version": "0.4.3",
+  "version": "0.6.0",
   "description": "Mailgun for Node.js",
   "author": "shz",
   "repository": {
     "type": "git",
     "url": "git@github.com:shz/node-mailgun.git"
   },
-  "main": "./mailgun",
+  "directories" {
+    "lib": "./lib/index"
+  },
+  "main": "./lib/index",
   "homepage": "http://github.com/shz/mailgun",
   "engine": "node"
 }
