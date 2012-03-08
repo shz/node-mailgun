@@ -8,6 +8,6 @@
     "url": "git@github.com:shz/node-mailgun.git"
   },
   "main": "./mailgun",
-  "homepage": "http://github.com/shz/mailgun",
+  "homepage": "http://github.com/shz/node-mailgun",
   "engine": "node"
 }
