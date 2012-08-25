@@ -75,8 +75,8 @@ in the MIME body yourself.
 
 Sends a raw MIME message.  *Don't* just use this with text; instead,
 you should either build a MIME message manually or by using some MIME
-library (I've not been able to find one for node.js -- if you're aware
-of one let me know and I'll link it here).
+library such as andris9's mailcomposer module https://github.com/andris9/mailcomposer 
+(FWIW mailcomposer is the same module used by the popular nodemailer module http://github.com/andris9/Nodemailer).
 
 `sendRaw(sender, recipients, rawBody, [servername], [callback(err)])`
 
