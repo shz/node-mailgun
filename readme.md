@@ -1,229 +1,50 @@
 # node-mailgun
 
-This library provides simple access to Mailgun's API for node.js applications.
-It's MIT licensed, and being used in production over at [Hipsell](http://hipsell.com).
+A wrapper around (Mailgun)[http://mailgun.com]'s v2 REST API.
 
 ## Installation
 
     npm install mailgun
 
-Or you can just throw `mailgun.js` into your application.  There are
-no dependendies outside of node's standard library.
-
 ## Usage
 
-At the time of writing, Mailgun's documentation is actually incorrect in a few places,
-which is unfortunate.  As such, I'm going to re-document everything in this README
-according to the actual way it's implemented in `node-mailgun`, which itself
-is based off the implementation from Mailgun's github account, and not the API
-docs on the site.
+Mailgun's v2 API is honestly quite lovely, and as such `node-mailgun`
+really just provides a thin wrapper around it (which is a good thing!).
 
-## Initialization
+### General Info
 
-Access to the API is done through a Mailgun object.  It's instantiated
+Generally, you'll just be calling methods on a `Mailgun2` object.  All
+methods take a callback of the form `function(err, data)` as their last
+argument.  When an error occurs, `err` will be set to a relevant `Error`
+object.  Otherwise, `err` will be `undefined`.  Unless something lower-level
+went wrong, the `data` parameter will always be set to the parsed
+response from Mailgun -- in the case of errors, this may provide some
+additional information about what went wrong.
+
+### Initialization
+
+Access to the API is done through a `Mailgun2` object.  It's instantiated
 like so:
 
-    var mg = new Mailgun('api-key');
+    var mg = new require('mailgun').Mailgun2('api-key');
 
-## Sending Email
+### API Methods
 
-Mailgun's API provides two methods for sending email: raw, and text.  Both
-of them are exposed here.
+TODO
 
-### sendText
+## Testing
 
-Sends a simple plain-text email.  This also allows for slightly easier
-sending of Mailgun options, since with `sendRaw` you have to set them
-in the MIME body yourself.
+Seeing as `node-mailgun` is just an API wrapper, testing doesn't buy but
+so much confidence.  However, there is indeed a test suite that does
+what it can to excercise the library.
 
-`sendText(sender, recipients, subject, text, [servername=''], [options={}], [callback(err)])`
+TODO - Explain npm test and devDependencies
 
- * `sender` - Sender of the message; this should be a full email address
-              (e.g. `example@example.com`).
- * `recipients` - A string (`example@example.com`) or array of strings (`['a@example.com', 'b@example.com']`)
-                  of recipients; these can be email addresses *or* HTTP URLs.
- * `subject` - Message subject
- * `text` - Message body text
- * `servername` - The name of the Mailgun server.  If you only have
-                  one server on your Mailgun account, this can be omitted.
-                  Otherwise, it should be set to the server you want to
-                  send from.
- * `options` - Optional parameters.  See Mailgun's API docs for details on
-               these.  At the time of writing, the only supported value is
-               `headers`, which should be a hash of additional MIME headers
-               you want to send.
- * `callback` - Callback to be fired when the email is done being sent.  This
-                should take a single parameter, `err`, that will be set to
-                the status code of the API HTTP response code  if the email
-                failed to send; on success, `err` will be `undefined`.
+## The Previous Version
 
-#### Example
+If you were using the previous version of `node-mailgun` built against
+the v1 API, it's still here, and you can continue using it through the
+`mailgun.Mailgun` interface as per usual.
 
-    sendText('sender@example.com',
-             ['recipient1@example.com', 'http://example.com/recipient2'],
-             'Behold the wonderous power of email!',
-             {'X-Campaign-Id': 'something'},
-             function(err) { err && console.log(err) });
-
-### sendRaw
-
-Sends a raw MIME message.  *Don't* just use this with text; instead,
-you should either build a MIME message manually or by using some MIME
-library (I've not been able to find one for node.js -- if you're aware
-of one let me know and I'll link it here).
-
-`sendRaw(sender, recipients, rawBody, [servername], [callback(err)])`
-
- * `sender` - Sender of the message; this should be a full email address
-              (e.g. `example@example.com`)
- * `recipients` - A string (`example@example.com`) or array of strings (`['a@example.com', 'b@example.com']`)
-                  of recipients; these can be email addresses *or* HTTP URLs.
- * `rawBody` - MIME message to send
- * `servername` - The name of the Mailgun server.  If you only have
-                  one server on your Mailgun account, this can be omitted.
-                  Otherwise, it should be set to the server you want to
-                  send from.
- * `callback` - Callback to be fired when the email is done being sent.  This
-                should take a single parameter, `err`, that will be set to
-                the status code of the API HTTP response code  if the email
-                failed to send; on success, `err` will be `undefined`.
-
-**Note:** Sending a message via raw MIME lets you use Mailgun's built-in
-          templating shinies.  Check out the [Mailgun Docs](http://documentation.mailgun.net/Documentation/DetailedDocsAndAPIReference#Message_Templates)
-          for details.
-
-#### Example
-
-    sendRaw('sender@example.com',
-            ['recipient1@example.com', 'http://example.com/recipient2'],
-            'From: sender@example.com' +
-              '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
-              '\nContent-Type: text/html; charset=utf-8' +
-              '\nSubject: I Love Email' +
-              '\n\nBecause it's just so awesome',
-            function(err) { err && console.log(err) });
-
-### Email Addresses
-
-Mailgun allows sender and recipient email addresses to be formatted in
-several different ways:
-
- * `'John Doe' <john@example.com>`
- * `"John Doe" <john@example.com>`
- * `John Doe <john@example.com>`
- * `<john@example.com>`
- * `john@example.com`
-
-### Mailgun Headers
-
-Mailgun understands a couple special headers, specified via `options` when using
-`sendText`, or in the MIME headers when using `sendRaw`.  These are defined
-below.
-
-(TODO - document usage better)
-
- * `X-Mailgun-Tag` - Used to tag sent emails (defined in `Mailgun.TAG`)
- * `X-Campaign-Id` - Used for tracking campaign data (defined in `Mailgun.CAMPAIGN_ID`)
- * `X-Mailgun-Track` - Used to toggle per-email tracking (defined in `Mailgun.TRACK`).
-                       Set to `yes` to enable or `no` to disable.
- * `X-Mailgun-Variables` - Used to send custom variables to your tracking
-                           callbacks (defined in `Mailgun.VARIABLES`)
-
-### Example
-
-Here's a complete sending example.
-
-    var Mailgun = require('mailgun').Mailgun;
-
-    var mg = new Mailgun('some-api-key');
-    mg.sendText('example@example.com', ['Recipient 1 <rec1@example.com>', 'rec2@example.com'],
-      'This is the subject',
-      'This is the text',
-      'noreply@example.com', {},
-      function(err) {
-        if (err) console.log('Oh noes: ' + err);
-        else     console.log('Success');
-    });
-
-## Routing
-
-Mailgun lets you route incoming email to different destinations.  TODO - more docs
-
-### createRoute
-
-Creates a new route.  (TODO - what happens if it already exists?)
-
-`createRoute(pattern, destination, [callback(err, id)])`
-
- * `pattern`  - Pattern to match against.  This can be a string or a regex,
-                and Mailgun with match accordingly.
- * `destination` - A destination string.  This can be a URL, email address,
-                   or a comma-separated list of email addresses.
- * `callback` - Callback to be fired when the creation has finished.  This
-                should take two parameters: `err`, which will hold an Error
-                object on failure, or undefined on success; and `id`, which
-                will be a string containing the ID of the newly-created
-                route on success.
-
-### deleteRoute
-
-Deletes the route with the specified ID if it exists.  If the route
-doesn't exist, nothing happens and the callback is fired without error.
-
-`deleteRoute(id, [callback(err)])`
-
- * `id` - Route ID, as returned by `getRoutes()` or `createRoute`.
- * `callback` - Callback to be fired when the deletion is completed.  This callback
-   takes a single argument, `err`, that will be set to an Error object
-   if something went wrong with the deletion.  If the deletion succeeded, or
-   no route existed with the specified ID, `err` will be `undefined`.
-
-### getRoutes
-
-Gets a list of all routes.
-
-`getRoutes(callback(err, routes))`
-
- * `callback` - Callback to be fired when the request has finished.  This
-                should take two parameters: `err`, which will be set to an
-                Error object if something went wrong while fetching the
-                routes; and `routes`, which will be a list of routes on
-                success.  Routes returned through this callback will be
-                plain old objects with three fields: `pattern`,
-                `destination`, and `id`.
-
-### Example
-
-Here's an example demonstrating all of the routing functionality.
-
-    // Create the route
-    var newRoute;
-    createRoute('foo@bar.com', 'http://example.com/example', function(err, id) {
-      if (err) return console.log('Error creating route:', err.message);
-
-      console.log('Route created:', id);
-      newRoute = id;
-    });
-
-    // Examine all routes
-    getRoutes(function(err, routes) {
-
-      if (err) return console.log('Error getting routes:', err.message);
-
-      for (var i=0; i<routes.length; i++) {
-        console.log('Route');
-        console.log('  Pattern:', routes[i].pattern);
-        console.log('  Destination:', routes[i].destination);
-        console.log('  Id:', routes[i].id);
-      }
-    });
-
-    // Delete the route we just created
-    deleteRoute(newRoute, function(err) {
-      if (err) return console.log('Error deleting route:', err.message);
-    });
-
-## Eventual Work:
-
- * Mailboxes
-
+Its documentation is no longer here, obviously.  If you need it, look
+a (prior version on Github)[https://github.com/shz/node-mailgun/blob/2944f538cefea4bb15fb748419fe0c30602be0c1/readme.md].
