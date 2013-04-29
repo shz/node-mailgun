@@ -106,7 +106,7 @@ library such as andris9's mailcomposer module https://github.com/andris9/mailcom
               '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
               '\nContent-Type: text/html; charset=utf-8' +
               '\nSubject: I Love Email' +
-              '\n\nBecause it's just so awesome',
+              '\n\nBecause it\'s just so awesome',
             function(err) { err && console.log(err) });
 
 ### Email Addresses
