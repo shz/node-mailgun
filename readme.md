@@ -1,6 +1,6 @@
 # node-mailgun
 
-A wrapper around (Mailgun)[http://mailgun.com]'s v2 REST API.
+A wrapper around [Mailgun](http://mailgun.com)'s v2 REST API.
 
 # Installation
 
@@ -59,7 +59,7 @@ the v1 API, it's still here, and you can continue using it through the
 `mailgun.Mailgun` interface as per usual.
 
 Its documentation is no longer here, obviously.  If you need it, look
-at the (prior version on Github)[https://github.com/shz/node-mailgun/blob/2944f538cefea4bb15fb748419fe0c30602be0c1/readme.md].
+at the [prior version on Github](https://github.com/shz/node-mailgun/blob/2944f538cefea4bb15fb748419fe0c30602be0c1/readme.md).
 
 # License
 
