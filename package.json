@@ -3,6 +3,10 @@
   "version": "0.6.0",
   "description": "Mailgun wrapper for node.js",
   "author": "shz",
+  "devDependencies": {
+    "nodeunit": "~0.8.1",
+    "nock": "~0.22.1"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:shz/node-mailgun.git"
@@ -15,6 +19,6 @@
   "homepage": "https://github.com/shz/node-mailgun",
   "engine": "node",
   "scripts": {
-    "test": "nodeunit test.js"
+    "test": "nodeunit test/run.js"
   }
 }
