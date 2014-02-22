@@ -93,13 +93,13 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
   // Flexible argument magic!
   var args = Array.prototype.slice.call(arguments, 4);
   // Pluck servername.
-  if (args[0] && typeof args[0] == 'string')
+  if (args.length && typeof args[0] == 'string')
     servername = args.shift() || servername;
   // Pluck options.
-  if (args[0] && typeof args[0] == 'object')
+  if (args.length && typeof args[0] == 'object')
     options = args.shift() || options;
   // Pluck callback.
-  if (args[0] && typeof args[0] == 'function')
+  if (args.length && typeof args[0] == 'function')
     callback = args.shift() || callback;
   // Don't be messy.
   delete args;
@@ -153,10 +153,10 @@ Mailgun.prototype.sendRaw = function(sender, recipients, rawBody) {
   // Flexible argument magic!
   var args = Array.prototype.slice.call(arguments, 3);
   // Pluck servername.
-  if (args[0] && typeof args[0] == 'string')
+  if (args.length && typeof args[0] == 'string')
     servername = args.shift() || servername;
   // Pluck callback.
-  if (args[0] && typeof args[0] == 'function')
+  if (args.length && typeof args[0] == 'function')
     callback = args.shift() || callback;
   // Don't be messy.
   delete args;
