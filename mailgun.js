@@ -24,6 +24,7 @@
 
 // Dirt simple includes.  Nice that we can keep things simple :)
 var http = require('http'),
+    https = require('https'),
     querystring = require('querystring');
 
 // Mailgun options constants.  See Mailgun's API docs for details.
@@ -49,14 +50,18 @@ var xre = function() {
 // This class is used to tie functionality to an API key, rather than
 // using a global initialization function that forces people to use
 // only one API key per application.
-var Mailgun = function(apiKey) {
+var Mailgun = function(apiKey, apiVersion) {
 
   // Authentication uses the api key in base64 form, so we cache that
   // here.
   this._apiKey64 = new Buffer('api:' + apiKey).toString('base64');
 
   this._apiKey = apiKey;
+  
+  // Set up api options
+  this._apiVersion = apiVersion || 'v1';
 };
+
 Mailgun.prototype = {};
 
 // Utility method to set up required http options.
@@ -71,12 +76,94 @@ Mailgun.prototype._createHttpOptions = function(resource, method, servername) {
       'Authorization': 'Basic ' + this._apiKey64
     }
   };
-}
+};
+
+// Utility method to set up required https options, used in api v2
+Mailgun.prototype._createHttpsOptions = function(method, domain) {
+  return {
+    host: 'api.mailgun.net',
+    port: 443,
+    method: method,
+    path: '/v2/' + (domain ? domain : '') + '/messages',
+    
+    headers: {
+      'Authorization': 'Basic ' + this._apiKey64
+    }
+  }
+};
 
 //
 // Here be the email sending code.
 //
 
+// send is used under api v2
+Mailgun.prototype.send = function(from, to, subject, text, html) {
+
+  // These are flexible arguments, so we define them here to make
+  // sure they're in scope.
+  var domain = '';
+  var options = {};
+  var callback = null;
+
+  // Less than 4 arguments means we're missing something that prevents
+  // us from even sending an email, so we fail.
+  if (arguments.length < 5)
+    throw new Error('Missing required argument');
+
+  // Flexible argument magic!
+  var args = Array.prototype.slice.call(arguments, 5);
+  // Pluck servername.
+  if (args[0] && typeof args[0] == 'string')
+    domain = args.shift() || domain;
+  // Pluck options.
+  if (args[0] && typeof args[0] == 'object')
+    options = args.shift() || options;
+  // Pluck callback.
+  if (args[0] && typeof args[0] == 'function')
+    callback = args.shift() || callback;
+  // Don't be messy.
+  delete args;
+
+  // We allow recipients to be passed as either a string or an array,
+  // but normalize to to an array for consistency later in the
+  // function.
+  if (typeof(to) == 'string')
+      to = [to];
+
+  // Build the HTTP POST body text.
+  var body = {
+    from: from,
+    to: to.join(', '),
+    subject: subject,
+    text: text || ''
+  };
+  
+  if (html && html !== '')
+    body.html = html;
+
+  body = querystring.stringify(body);
+
+  if(options && options !== {})
+    body.options = JSON.stringify(options);
+
+  // Prepare our API request.
+  var httpsOptions = this._createHttpsOptions('POST', domain);
+  httpsOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+  httpsOptions.headers['Content-Length'] = Buffer.byteLength(body);
+
+  // Fire the request to Mailgun's API.
+  // If the user supplied a callback, fire it and set `err` to the
+  // status code of the request if it wasn't successful.
+  var req = https.request(httpsOptions, function(res) {
+    if (callback) callback(res.statusCode != 200 ? new Error(res.statusCode) : undefined);
+  });
+
+  // Wrap up the request by sending the body, which contains the
+  // actual email data we want to send.
+  req.end(body);
+};
+
+// sendText is used under old api
 Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
 
   // These are flexible arguments, so we define them here to make
@@ -108,7 +195,7 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
   // but normalize to to an array for consistency later in the
   // function.
   if (typeof(recipients) == 'string')
-      recipients = [recipients];
+    recipients = [recipients];
 
   // Build the HTTP POST body text.
   var body = querystring.stringify({
