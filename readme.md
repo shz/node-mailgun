@@ -8,7 +8,7 @@ It's MIT licensed, and being used in production over at [Hipsell](http://hipsell
     npm install mailgun
 
 Or you can just throw `mailgun.js` into your application.  There are
-no dependendies outside of node's standard library.
+no dependencies outside of node's standard library.
 
 **Note:** `master` on Github is going to be untested/unstable at times,
           as this is a small enough library that I don't want to bother
