@@ -1,6 +1,6 @@
 {
   "name": "mailgun",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Mailgun for Node.js",
   "author": "shz",
   "repository": {
