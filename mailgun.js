@@ -23,7 +23,7 @@
 // TODO - better error handling on requests
 
 // Dirt simple includes.  Nice that we can keep things simple :)
-var http = require('http'),
+var https = require('https'),
     querystring = require('querystring');
 
 // Mailgun options constants.  See Mailgun's API docs for details.
@@ -63,7 +63,7 @@ Mailgun.prototype = {};
 Mailgun.prototype._createHttpOptions = function(resource, method, servername) {
   return {
     host: 'mailgun.net',
-    port: 80,
+    port: 443,
     method: method,
     path: '/api/' + resource + (servername ? '?servername=' + servername : ''),
 
@@ -126,7 +126,7 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
   httpOptions.headers['Content-Length'] = Buffer.byteLength(body);
 
   // Fire the request to Mailgun's API.
-  var req = http.request(httpOptions, function(res) {
+  var req = https.request(httpOptions, function(res) {
 
     // If the user supplied a callback, fire it and set `err` to the
     // status code of the request if it wasn't successful.
@@ -179,7 +179,7 @@ Mailgun.prototype.sendRaw = function(sender, recipients, rawBody) {
   httpOptions.headers['Content-Length'] = Buffer.byteLength(message);
 
   // Fire it.
-  var req = http.request(httpOptions, function(res) {
+  var req = https.request(httpOptions, function(res) {
 
     // If the user supplied a callback, fire it and set `err` to the
     // status code of the request if it wasn't successful.
@@ -214,7 +214,7 @@ Mailgun.prototype.createRoute = function(pattern, destination, callback) {
   httpOptions.headers['Content-Length'] = Buffer.byteLength(data);
 
   // Fire it.
-  http.request(httpOptions, function(res) {
+  https.request(httpOptions, function(res) {
 
     // Collect the data
     var data = '';
@@ -245,7 +245,7 @@ Mailgun.prototype.deleteRoute = function(id, callback) {
   httpOptions.headers['Content-Length'] = 0;
 
   // Fire it.
-  http.request(httpOptions, function(res) {
+  https.request(httpOptions, function(res) {
 
     if (res.statusCode == 200) {
       callback && callback(undefined);
@@ -271,7 +271,7 @@ Mailgun.prototype.getRoutes = function(callback) {
   var httpOptions = this._createHttpOptions('routes.xml', 'GET');
 
   // Fire it.
-  http.request(httpOptions, function(res) {
+  https.request(httpOptions, function(res) {
 
     // Check for failure
     if (res.statusCode != 200)
