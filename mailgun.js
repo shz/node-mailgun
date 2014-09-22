@@ -62,7 +62,7 @@ Mailgun.prototype = {};
 // Utility method to set up required http options.
 Mailgun.prototype._createHttpOptions = function(resource, method, servername) {
   return {
-    host: 'mailgun.net',
+    host: 'api.mailgun.net',
     port: 443,
     method: method,
     path: '/api/' + resource + (servername ? '?servername=' + servername : ''),
@@ -90,7 +90,7 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
   if (arguments.length < 4)
     throw new Error('Missing required argument');
 
-  // Flexible argument magic!
+  // Flexible argument magic
   var args = Array.prototype.slice.call(arguments, 4);
   // Pluck servername.
   if (args.length && typeof args[0] == 'string')
