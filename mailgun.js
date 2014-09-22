@@ -92,17 +92,12 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
 
   // Flexible argument magic
   var args = Array.prototype.slice.call(arguments, 4);
-  // Pluck servername.
   if (args.length && typeof args[0] == 'string')
     servername = args.shift() || servername;
-  // Pluck options.
   if (args.length && typeof args[0] == 'object')
     options = args.shift() || options;
-  // Pluck callback.
   if (args.length && typeof args[0] == 'function')
     callback = args.shift() || callback;
-  // Don't be messy.
-  delete args;
 
   // We allow recipients to be passed as either a string or an array,
   // but normalize to to an array for consistency later in the
