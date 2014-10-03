@@ -5,7 +5,9 @@ It's MIT licensed, and being used in production over at [Hipsell](http://hipsell
 
 ## Installation
 
-    npm install mailgun
+```sh
+$ npm install mailgun
+```
 
 Or you can just throw `mailgun.js` into your application.  There are
 no dependencies outside of node's standard library.
@@ -29,7 +31,9 @@ docs on the site.
 Access to the API is done through a Mailgun object.  It's instantiated
 like so:
 
-    var mg = new Mailgun('api-key');
+```js
+var mg = new Mailgun('api-key');
+```
 
 ## Sending Email
 
@@ -42,7 +46,9 @@ Sends a simple plain-text email.  This also allows for slightly easier
 sending of Mailgun options, since with `sendRaw` you have to set them
 in the MIME body yourself.
 
-`sendText(sender, recipients, subject, text, [servername=''], [options={}], [callback(err)])`
+```js
+sendText(sender, recipients, subject, text, [servername=''], [options={}], [callback(err)])
+```
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com`).
@@ -64,21 +70,25 @@ in the MIME body yourself.
                 failed to send; on success, `err` will be `undefined`.
 
 #### Example
+```js
 
-    sendText('sender@example.com',
-             ['recipient1@example.com', 'http://example.com/recipient2'],
-             'Behold the wonderous power of email!',
-             {'X-Campaign-Id': 'something'},
-             function(err) { err && console.log(err) });
+sendText('sender@example.com',
+         ['recipient1@example.com', 'http://example.com/recipient2'],
+         'Behold the wonderous power of email!',
+         {'X-Campaign-Id': 'something'},
+         function(err) { err && console.log(err) });
+```
 
 ### sendRaw
 
 Sends a raw MIME message.  *Don't* just use this with text; instead,
 you should either build a MIME message manually or by using some MIME
-library such as andris9's mailcomposer module https://github.com/andris9/mailcomposer 
+library such as andris9's mailcomposer module https://github.com/andris9/mailcomposer
 (FWIW mailcomposer is the same module used by the popular nodemailer module http://github.com/andris9/Nodemailer).
 
-`sendRaw(sender, recipients, rawBody, [servername], [callback(err)])`
+```js
+sendRaw(sender, recipients, rawBody, [servername], [callback(err)])
+```
 
  * `sender` - Sender of the message; this should be a full email address
               (e.g. `example@example.com`)
@@ -100,15 +110,16 @@ library such as andris9's mailcomposer module https://github.com/andris9/mailcom
 
 #### Example
 
-    sendRaw('sender@example.com',
-            ['recipient1@example.com', 'http://example.com/recipient2'],
-            'From: sender@example.com' +
-              '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
-              '\nContent-Type: text/html; charset=utf-8' +
-              '\nSubject: I Love Email' +
-              '\n\nBecause it\'s just so awesome',
-            function(err) { err && console.log(err) });
-
+```js
+sendRaw('sender@example.com',
+        ['recipient1@example.com', 'http://example.com/recipient2'],
+        'From: sender@example.com' +
+          '\nTo: ' + 'recipient1@example.com, http://example.com/recipient2' +
+          '\nContent-Type: text/html; charset=utf-8' +
+          '\nSubject: I Love Email' +
+          '\n\nBecause it\'s just so awesome',
+        function(err) { err && console.log(err) });
+```
 ### Email Addresses
 
 Mailgun allows sender and recipient email addresses to be formatted in
@@ -132,18 +143,19 @@ below.
 ### Example
 
 Here's a complete sending example.
+```js
+var Mailgun = require('mailgun').Mailgun;
 
-    var Mailgun = require('mailgun').Mailgun;
-
-    var mg = new Mailgun('some-api-key');
-    mg.sendText('example@example.com', ['Recipient 1 <rec1@example.com>', 'rec2@example.com'],
-      'This is the subject',
-      'This is the text',
-      'noreply@example.com', {},
-      function(err) {
-        if (err) console.log('Oh noes: ' + err);
-        else     console.log('Success');
-    });
+var mg = new Mailgun('some-api-key');
+mg.sendText('example@example.com', ['Recipient 1 <rec1@example.com>', 'rec2@example.com'],
+  'This is the subject',
+  'This is the text',
+  'noreply@example.com', {},
+  function(err) {
+    if (err) console.log('Oh noes: ' + err);
+    else     console.log('Success');
+});
+```
 
 ## Routing
 
@@ -153,15 +165,18 @@ Mailgun lets you route incoming email to different destinations.  TODO - more do
 
 Creates a new route.  TODO - more docs
 
-`createRoute(pattern, destination, [callback(err, id)])`
+```js
+createRoute(pattern, destination, [callback(err, id)])
+```
 
 TODO - document arguments
 
 ### deleteRoute
 
 Deletes the route with the specified ID if it exists, otherwise fails silently.
-
-`deleteRoute(id, [callback(err)])`
+```js
+deleteRoute(id, [callback(err)])
+```
 
  * id - Route ID, as returned by `getRoutes()` or `createRoute`.
  * Callback to be fired when the deletion is completed.  This callback
@@ -173,7 +188,9 @@ Deletes the route with the specified ID if it exists, otherwise fails silently.
 
 Gets a list of all routes.
 
-`getRoutes(callback(err, routes))`
+```js
+getRoutes(callback(err, routes))
+```
 
  * `callback` - Callback to be fired when the request has finished.  This
                 should take two parameters: `err`, which will hold either an
@@ -183,18 +200,19 @@ Gets a list of all routes.
                 `destination`, and `id`.
 
 #### Example
+```js
+getRoutes(function(err, routes) {
 
-    getRoutes(function(err, routes) {
+  if (err) console.log('Error:', err);
 
-      if (err) console.log('Error:', err);
-
-      for (var i=0; i<routes.length; i++) {
-        console.log('Route');
-        console.log('  Pattern:', routes[i].pattern);
-        console.log('  Destination:', routes[i].destination);
-        console.log('  Id:', routes[i].id);
-      }
-    });
+  for (var i=0; i<routes.length; i++) {
+    console.log('Route');
+    console.log('  Pattern:', routes[i].pattern);
+    console.log('  Destination:', routes[i].destination);
+    console.log('  Id:', routes[i].id);
+  }
+});
+```
 
 ## Eventual Work:
 
