@@ -32,6 +32,7 @@ Access to the API is done through a Mailgun object.  It's instantiated
 like so:
 
 ```js
+var Mailgun = require('mailgun').Mailgun;
 var mg = new Mailgun('api-key');
 ```
 
