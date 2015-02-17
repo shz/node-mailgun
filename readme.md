@@ -105,10 +105,6 @@ sendRaw(sender, recipients, rawBody, [servername], [callback(err)])
                 the status code of the API HTTP response code  if the email
                 failed to send; on success, `err` will be `undefined`.
 
-**Note:** Sending a message via raw MIME lets you use Mailgun's built-in
-          templating shinies.  Check out the [Mailgun Docs](http://documentation.mailgun.net/Documentation/DetailedDocsAndAPIReference#Message_Templates)
-          for details.
-
 #### Example
 
 ```js
