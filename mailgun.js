@@ -85,6 +85,18 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
   var options = {};
   var callback = null;
 
+  if (typeof sender === 'undefined')
+    throw new Error('sender is undefined');
+
+  if (typeof sender !== 'string')
+    throw new Error('sender is not a string');
+
+  if (typeof recipients === 'undefined')
+    throw new Error('recipients is undefined');
+
+  if (typeof recipients !== 'string' && !(recipients instanceof Array))
+    throw new Error('recipients is not a string or an array');
+
   // Less than 4 arguments means we're missing something that prevents
   // us from even sending an email, so we fail.
   if (arguments.length < 4)
@@ -139,6 +151,18 @@ Mailgun.prototype.sendRaw = function(sender, recipients, rawBody) {
   // sure they're in scope.
   var servername = '';
   var callback = null;
+
+  if (typeof sender === 'undefined')
+    throw new Error('sender is undefined');
+
+  if (typeof sender !== 'string')
+    throw new Error('sender is not a string');
+
+  if (typeof recipients === 'undefined')
+    throw new Error('recipients is undefined');
+
+  if (typeof recipients !== 'string' && !(recipients instanceof Array))
+    throw new Error('recipients is not a string or an array');
 
   // Less than 3 arguments means we're missing something that prevents
   // us from even sending an email, so we fail.
