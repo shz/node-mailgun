@@ -140,6 +140,10 @@ Mailgun.prototype.sendText = function(sender, recipients, subject, text) {
     if (callback) callback(res.statusCode != 201 ? new Error(res.statusCode) : undefined);
   });
 
+  req.on('error', function(err) {
+    if (callback) callback(err);
+  });
+
   // Wrap up the request by sending the body, which contains the
   // actual email data we want to send.
   req.end(body);
@@ -203,6 +207,10 @@ Mailgun.prototype.sendRaw = function(sender, recipients, rawBody) {
     // If the user supplied a callback, fire it and set `err` to the
     // status code of the request if it wasn't successful.
     if (callback) callback(res.statusCode != 201 ? new Error(res.statusCode) : undefined);
+  });
+
+  req.on('error', function(err) {
+    if (callback) callback(err);
   });
 
   // Wrap up the request by sending the message, which contains the
