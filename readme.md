@@ -1,6 +1,6 @@
 # DEFUNCT
 
-I've done a terrible job keeping this up to date, handling PRs and the rest.  You shouldn't use this for anything new, try the (actually maintained!) [https://www.npmjs.com/package/mailgun-js](mailgun-js) package instead.
+I've done a terrible job keeping this up to date, handling PRs and the rest.  You shouldn't use this for anything new, try the (actually maintained!) [mailgun-js](https://www.npmjs.com/package/mailgun-js) package instead.
 
 I'm keeping this up for any existing users, but it's essentially read-only at this point.  Don't use `node-mailgun` if you have a choice.
 
