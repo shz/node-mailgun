@@ -61,7 +61,7 @@ Mailgun.prototype = {};
 
 // Utility method to set up required http options.
 Mailgun.prototype._createHttpOptions = function(resource, method, servername) {
-  return {
+  var options = {
     host: 'api.mailgun.net',
     port: 443,
     method: method,
@@ -71,6 +71,12 @@ Mailgun.prototype._createHttpOptions = function(resource, method, servername) {
       'Authorization': 'Basic ' + this._apiKey64
     }
   };
+  var proxyServer = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || false;
+  if (proxyServer !== false && proxyServer !== '') {
+    var HttpsProxyAgent = require('https-proxy-agent');
+    options.agent = new HttpsProxyAgent(proxyServer);
+  }
+  return options;
 }
 
 //

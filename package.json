@@ -8,6 +8,9 @@
     "url": "git@github.com:shz/node-mailgun.git"
   },
   "main": "./mailgun",
+  "dependencies": {
+    "https-proxy-agent": "~1.0.0"
+  },
   "homepage": "http://github.com/shz/node-mailgun",
   "engine": "node"
 }
